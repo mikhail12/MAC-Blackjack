@@ -10,7 +10,13 @@ export default defineNuxtConfig({
       tailwindcss(),
     ],
   },
-  modules: ['shadcn-nuxt', '@nuxtjs/color-mode', '@nuxt/icon', 'radix-vue/nuxt'],
+  modules: [
+    'shadcn-nuxt',
+    '@nuxtjs/color-mode',
+    '@nuxt/icon',
+    'radix-vue/nuxt',
+    '@nuxt/test-utils/module'
+  ],
   shadcn: {
     /**
      * Prefix for all the imported component
