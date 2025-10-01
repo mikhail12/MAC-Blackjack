@@ -11,8 +11,7 @@
         <DarkModePicker />
       </div>
     </div>
-    <NuxtRouteAnnouncer />
-    <!-- <NuxtWelcome /> -->
+    <NuxtPage />
   </div>
 </template>
 

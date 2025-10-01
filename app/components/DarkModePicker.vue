@@ -10,8 +10,10 @@
 
 <script setup lang="ts">
 import { Button } from "@/components/ui/button"
+
 const colorMode = useColorMode();
 const isDarkMode = ref(false);
+
 watchEffect(() => {
   colorMode.preference = isDarkMode.value ? "dark" : "light";
 });
