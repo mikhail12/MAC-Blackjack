@@ -26,7 +26,8 @@ export default defineNuxtConfig({
     '@nuxtjs/color-mode',
     '@nuxt/icon',
     'radix-vue/nuxt',
-    '@nuxt/test-utils/module'
+    '@nuxt/test-utils/module',
+    '@nuxtjs/supabase'
   ],
   shadcn: {
     /**
@@ -41,5 +42,17 @@ export default defineNuxtConfig({
   },
   colorMode: {
     classSuffix: ''
+  },
+  supabase: {
+    url: process.env.SUPABASE_URL,
+    key: process.env.SUPABASE_KEY,
+    secretKey: process.env.SUPABASE_SECRET_KEY,
+    redirectOptions: {
+      login: '/login',
+      callback: '/confirm',
+      include: undefined,
+      exclude: [],
+      saveRedirectToCookie: true,
+    }
   }
 })

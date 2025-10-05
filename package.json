@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@nuxt/icon": "^2.0.0",
+    "@nuxtjs/supabase": "^2.0.0",
     "@tailwindcss/vite": "^4.1.13",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
