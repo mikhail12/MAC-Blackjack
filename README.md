@@ -73,3 +73,8 @@ bun run preview
 ```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+
+# Assumptions
+In my interpretation of the assumptions, updates to the chips/user balance can only be done server-side. With regards to the game in action, I assume the logic can be done locally, with updates to the history going through verification (such as checking cards aren't changed between turns, etc.).
+
+Players dont have direct update permissions on the game table, instead, they update the current game through a postgres function in supabase.

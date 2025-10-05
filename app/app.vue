@@ -7,7 +7,7 @@
       </div>
       <div class="flex gap-5 items-center">
         <NuxtLink to="/">History</NuxtLink>
-        <button>Login</button>
+        <Button @click="userStore.updateGameHistory()">Login</Button>
         <DarkModePicker />
       </div>
     </div>
@@ -16,9 +16,10 @@
 </template>
 
 <script setup lang="ts">
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 const colorMode = useColorMode();
 const isDarkMode = ref(false);
+const userStore = useUserStore();
 watchEffect(() => {
   colorMode.preference = isDarkMode.value ? "dark" : "light";
 });

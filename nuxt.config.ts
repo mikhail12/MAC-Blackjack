@@ -27,7 +27,10 @@ export default defineNuxtConfig({
     '@nuxt/icon',
     'radix-vue/nuxt',
     '@nuxt/test-utils/module',
-    '@nuxtjs/supabase'
+    '@nuxtjs/supabase',
+    '@nuxt/eslint',
+    '@pinia/nuxt',
+    '@vueuse/nuxt'
   ],
   shadcn: {
     /**
