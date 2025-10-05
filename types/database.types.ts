@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      game: {
+        Row: {
+          gameStatus: number | null
+          house_value: number | null
+          id: number
+          latest_timestamp: string | null
+          payout: number | null
+          player_value: number | null
+          result: number | null
+          started_game: string
+          user_id: string
+        }
+        Insert: {
+          gameStatus?: number | null
+          house_value?: number | null
+          id?: number
+          latest_timestamp?: string | null
+          payout?: number | null
+          player_value?: number | null
+          result?: number | null
+          started_game?: string
+          user_id: string
+        }
+        Update: {
+          gameStatus?: number | null
+          house_value?: number | null
+          id?: number
+          latest_timestamp?: string | null
+          payout?: number | null
+          player_value?: number | null
+          result?: number | null
+          started_game?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       testtable: {
         Row: {
           created_at: string
