@@ -83,8 +83,8 @@ const createCard = (rank: Card['rank'], suit: Card['suit'] = '♠', isShown = fa
 
 const makeGame = (overrides: Partial<GameHistoryEntry> = {}): GameHistoryEntry => ({
     id: overrides.id ?? 1,
-    startedTimestamp: overrides.startedTimestamp ?? Date.now(),
-    timestamp: overrides.timestamp ?? Date.now(),
+    started_game: overrides.started_game ?? Date.now(),
+    latest_timestamp: overrides.latest_timestamp ?? Date.now(),
     bet: overrides.bet ?? 0,
     playerHand: overrides.playerHand ? overrides.playerHand.map(card => ({ ...card })) : [],
     dealerHand: overrides.dealerHand ? overrides.dealerHand.map(card => ({ ...card })) : [],
@@ -152,6 +152,8 @@ const setupComposable = async (options: GameFactoryOptions = {}): Promise<SetupC
 
     const composable = await useBlackjackGame();
 
+    await composable.initOnMounted();
+    
     return {
         composable,
         userRef,

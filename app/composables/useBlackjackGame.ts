@@ -211,5 +211,5 @@ export const useBlackjackGame = async () => {
         });
     }
 
-    return {currentGame, gameStatus, safeToShow, playerTotal, dealerTotal, playerBusted, dealerBusted, canHitOrStand, canBet, canReset, placeBetAndStartNewGame, hit, stand, initOnMounted, reset}
+    return {currentGame, gameStatus, safeToShow, playerTotal, dealerTotal, playerBusted, dealerBusted, canHitOrStand, canBet, canReset, placeBetAndStartNewGame, hit, stand, dealerPlay, initOnMounted, reset}
 }
