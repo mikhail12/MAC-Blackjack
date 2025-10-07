@@ -10,7 +10,6 @@ export const useCurrentgameStore = defineStore('currentGame', () => {
         const { data, error } = await supabase.rpc("trystartgamewithbet", betData).single();
         if (data) {
             const userStore = await useUserStore();
-            console.warn(userStore.getUser());
             await userStore.updateUserProfile();
             return data;
         }
