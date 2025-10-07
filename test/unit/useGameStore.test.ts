@@ -1,9 +1,9 @@
-import { beforeEach } from "vitest"
-import { setActivePinia } from "pinia";
+import { beforeEach, describe, test } from "vitest";
+import { setActivePinia, createPinia } from "pinia";
 
 describe("Games Store", () => {
     beforeEach(() => {
-        setActivePinia()
+        setActivePinia(createPinia());
     })
 
     describe("starting a game through call to 'tryStartGameWithBet'", () => {

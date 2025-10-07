@@ -13,7 +13,9 @@ export const useCurrentgameStore = defineStore('currentGame', () => {
             await userStore.updateUserProfile();
             return data;
         }
-        console.warn(error);
+        if (error) {
+            console.warn(error);
+        }
         return undefined;
     };
 
@@ -30,7 +32,9 @@ export const useCurrentgameStore = defineStore('currentGame', () => {
             })
             // .update({ playerHand: game.playerHand })
             .eq('id', game.id!);
-        console.warn(error);
+        if (error.error) {
+            console.warn(error);
+        }
     }
 
     const getGame = async (): Promise<GameHistoryEntry | null> => {
@@ -39,7 +43,7 @@ export const useCurrentgameStore = defineStore('currentGame', () => {
             .select()
             .neq("gameStatus",3)
             .limit(1)
-            .single()
+            .maybeSingle()
             .overrideTypes<GameHistoryEntry, { merge: false }>()
         
         if (error) {

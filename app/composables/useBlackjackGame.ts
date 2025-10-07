@@ -1,5 +1,4 @@
-import { error } from 'happy-dom/lib/PropertySymbol.js'
-import { ref, computed, readonly } from 'vue'
+import { ref, computed } from 'vue'
 
 export type CardSuit = '♠' | '♥' | '♦' | '♣'
 export type CardRank = 'A' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | 'J' | 'Q' | 'K'
@@ -21,8 +20,8 @@ export enum GameStatus {
 
 export interface GameHistoryEntry {
   id?: number,
-  startedTimestamp: number,
-  timestamp: number
+  started_game: number,
+  latest_timestamp: number
   bet: number
   playerHand: Card[]
   dealerHand: Card[]
@@ -35,14 +34,14 @@ const CARD_RANKS: CardRank[] = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10
 const CARD_SUITS: CardSuit[] = ['♠', '♥', '♦', '♣']
 
 export const useBlackjackGame = async () => {
-    let userStore = await useUserStore();
-    let user = await userStore.getUser();
+    const userStore = await useUserStore();
+    const user = await userStore.getUser();
     const currentGameStore = useCurrentgameStore();
     const currentGame = ref<GameHistoryEntry | undefined>(undefined);
     try {
         currentGame.value = await currentGameStore.getGame() ?? undefined;
     }
-    catch (_) {}
+    catch (error) { console.warn(error)}
     
     const gameStatus = computed(() => currentGame.value?.gameStatus ? currentGame.value!.gameStatus : GameStatus.idle)
     const safeToShow = ref(false);
@@ -116,7 +115,7 @@ export const useBlackjackGame = async () => {
             throw new Error("Insufficient balance");
         }
         
-        let newGame = await currentGameStore.startGame(betAmount);
+        const newGame = await currentGameStore.startGame(betAmount);
         if (!newGame) {
             throw new Error("Failed to start a new game. Please reload the page and check your balance");
         }
@@ -134,13 +133,11 @@ export const useBlackjackGame = async () => {
         currentGame.value!.dealerHand.push(drawCard());
 
         currentGame.value!.gameStatus = playerTotal.value === 21 ? GameStatus.dealer_turn : GameStatus.player_turn;
-        currentGame.value!.timestamp = Date.now();
-        await currentGameStore.updateGame(currentGame.value!);
-        safeToShow.value = true;
-
-        if (currentGame.value.gameStatus === GameStatus.dealer_turn) {
-            await dealerPlay();
+        currentGame.value!.latest_timestamp = Date.now();
+        if (currentGame.value.gameStatus !== GameStatus.dealer_turn) {
+            await currentGameStore.updateGame(currentGame.value!);
         }
+        safeToShow.value = true;
     };
 
     const determineWinner = async () => {
@@ -181,7 +178,6 @@ export const useBlackjackGame = async () => {
         else {
             currentGame.value!.gameStatus = GameStatus.dealer_turn;
             currentGameStore.updateGame(currentGame.value!);
-            await dealerPlay();
         }
     }
 
@@ -192,7 +188,6 @@ export const useBlackjackGame = async () => {
 
         currentGame.value!.gameStatus = GameStatus.dealer_turn;
         await currentGameStore.updateGame(currentGame.value!);
-        await dealerPlay();
     }
 
     const reset = () => {
@@ -204,5 +199,17 @@ export const useBlackjackGame = async () => {
         console.warn("reset!")
     }
 
-    return {currentGame, gameStatus, safeToShow, playerTotal, dealerTotal, playerBusted, dealerBusted, canHitOrStand, canBet, canReset, placeBetAndStartNewGame, hit, stand, dealerPlay, reset}
+    const initOnMounted = async () => {
+        if (currentGame.value?.gameStatus === GameStatus.dealer_turn) {
+            await dealerPlay();
+        }
+
+        watch(() => currentGame.value?.gameStatus, async () => {
+            if (currentGame.value?.gameStatus === GameStatus.dealer_turn) {
+                await dealerPlay();
+            }
+        });
+    }
+
+    return {currentGame, gameStatus, safeToShow, playerTotal, dealerTotal, playerBusted, dealerBusted, canHitOrStand, canBet, canReset, placeBetAndStartNewGame, hit, stand, initOnMounted, reset}
 }

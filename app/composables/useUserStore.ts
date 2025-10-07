@@ -6,19 +6,12 @@ export const useUserStore = defineStore('user', () => {
     const supabase = useSupabaseClient<Database>();
     const user = ref();
 
-    // const currentBalance = computed(() => user.value.currentBalance);
-    // const history = computed(() => user.value.history);
     const getUser = async () => {
         if (user.value) {
             return user.value;
         }
         let supaUser = (await supabase.auth.getUser()).data.user;
         
-
-        // if ((!supaUser && localUser.value) || (supaUser && localUser.value.id != supaUser?.id)) {
-        //     navigateTo("/login");
-        // }
-        // else if (!supaUser) {
         if (!supaUser) {
             const authResp = await supabase.auth.signInAnonymously();
             if (authResp.error) {
@@ -26,16 +19,18 @@ export const useUserStore = defineStore('user', () => {
             }
             supaUser = (await supabase.auth.getUser()).data.user;
         }
-        console.warn(supaUser!.id);
-        const data = await supabase.from('userProfile').select().eq('id', supaUser!.id ?? "").single().overrideTypes<User>();
-        user.value = data.data as unknown as User
-        console.warn(`data: ${JSON.stringify(user.value)}`);
+        const { data, error } = await supabase.from('userProfile').select().eq('id', supaUser!.id ?? "").limit(1).maybeSingle().overrideTypes<User>();
+        if (error) {
+            console.warn(error);
+            throw Error("Couldn't load the user's profile")
+        }
+        user.value = data
         return user;
     }
 
     const updateUserProfile = async () => {
         const supaUser = (await supabase.auth.getUser()).data.user;
-        const data = await supabase.from('userProfile').select().eq('id', supaUser!.id ?? "").single().overrideTypes<User>();
+        const data = await supabase.from('userProfile').select().eq('id', supaUser!.id ?? "").limit(1).maybeSingle().overrideTypes<User>();
         user.value = data.data as unknown as User;
     }
 
