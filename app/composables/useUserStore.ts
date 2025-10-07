@@ -1,12 +1,13 @@
 import { defineStore } from "pinia";
 import type { Database } from "~/types/database.types";
 
-export const useUserStore = defineStore('user', () => {
+export const useUserStore = defineStore('userStore', () => {
     // const localUser = useLocalStorage<User>("Current User", { id: '', currentBalance: 1000}, { initOnMounted: true })
-    const supabase = useSupabaseClient<Database>();
+    
     const user = ref();
 
     const getUser = async () => {
+        const supabase = useSupabaseClient<Database>();
         if (user.value) {
             return user.value;
         }
@@ -29,12 +30,13 @@ export const useUserStore = defineStore('user', () => {
     }
 
     const updateUserProfile = async () => {
+        const supabase = useSupabaseClient<Database>();
         const supaUser = (await supabase.auth.getUser()).data.user;
         const data = await supabase.from('userProfile').select().eq('id', supaUser!.id ?? "").limit(1).maybeSingle().overrideTypes<User>();
         user.value = data.data as unknown as User;
     }
 
-    return { supabase, getUser, updateUserProfile};
+    return { getUser, updateUserProfile };
 });
 
 export interface User {

@@ -3,12 +3,12 @@ import { ref, nextTick, type Ref } from 'vue';
 import { mockNuxtImport } from '@nuxt/test-utils/runtime';
 import { createTestingPinia } from '@pinia/testing';
 import { setActivePinia } from 'pinia';
+import { useBlackjackGame } from '../../app/composables/useBlackjackGame';
 import {
-    useBlackjackGame,
     GameStatus,
     type Card,
     type GameHistoryEntry,
-} from '../../app/composables/useBlackjackGame';
+} from '../../app/types/game';
 
 process.env.NUXT_PUBLIC_SUPABASE_URL ||= 'https://example.supabase.co';
 process.env.NUXT_PUBLIC_SUPABASE_KEY ||= 'public-anon-key';
@@ -153,7 +153,7 @@ const setupComposable = async (options: GameFactoryOptions = {}): Promise<SetupC
     const composable = await useBlackjackGame();
 
     await composable.initOnMounted();
-    
+
     return {
         composable,
         userRef,
@@ -333,9 +333,16 @@ describe('useBlackjackGame', () => {
 
                 await placeBetAndStartNewGame(100);
 
+                await nextTick();
+                await nextTick();
+                await vi.waitFor(() => {
+                    expect(currentGame.value?.gameStatus).toBe(GameStatus.finished);
+                });
+
                 expect(randomSpy).toHaveBeenCalled();
                 expect(currentGame.value?.playerHand).toHaveLength(2);
                 expect(currentGame.value?.dealerHand.length).toBeGreaterThanOrEqual(2);
+                expect(currentGameStoreMock.updateGame).toHaveBeenCalled();
                 expect(currentGame.value?.result).toBe('win');
                 expect(currentGameStoreMock.finishGame).toHaveBeenCalledWith(expect.objectContaining({ result: 'win' }));
                 expect(currentGame.value?.gameStatus).toBe(GameStatus.finished);
@@ -357,6 +364,12 @@ describe('useBlackjackGame', () => {
                 );
 
                 await placeBetAndStartNewGame(100);
+
+                await nextTick();
+                await nextTick();
+                await vi.waitFor(() => {
+                    expect(currentGame.value?.gameStatus).toBe(GameStatus.finished);
+                });
 
                 expect(randomSpy).toHaveBeenCalled();
                 expect(currentGame.value?.playerHand).toHaveLength(2);
@@ -497,7 +510,7 @@ describe('useBlackjackGame', () => {
 
             expect(randomSpy).toHaveBeenCalled();
             expect(currentGame.value?.playerHand).toHaveLength(3);
-            expect(currentGameStoreMock.updateGame).toHaveBeenCalledTimes(2);
+            expect(currentGameStoreMock.updateGame).toHaveBeenCalledTimes(3);
             expect(currentGameStoreMock.finishGame).toHaveBeenCalledWith(expect.objectContaining({ result: 'win' }));
             expect(currentGame.value?.gameStatus).toBe(GameStatus.finished);
         });
