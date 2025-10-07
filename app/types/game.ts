@@ -5,9 +5,10 @@ export interface Card {
   rank: CardRank;
   suit: CardSuit;
   isShown: boolean;
+  cardNumber: number;
 }
 
-export type GameResult = 'win' | 'lose' | 'push' | 'early-win' | 'early-push' | null;
+export type GameResult = 'win' | 'lose' | 'push' | null;
 
 export enum GameStatus {
   idle = 0,

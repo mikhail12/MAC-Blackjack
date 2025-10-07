@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="flex flex-col flex-1 min-h-screen">
     <div class="h-15 items-center flex w-full justify-between px-10">
       <div class="flex gap-5 items-center">
         <NuxtLink to="/" class="font-bold text-3xl">Blackjack</NuxtLink>
@@ -9,7 +9,7 @@
       </div>
       <div class="flex gap-5 items-center">
         <NuxtLink to="/">History</NuxtLink>
-        <Button ><NuxtLink to="/login">Login</NuxtLink></Button>
+        <Button class="hidden"><NuxtLink to="/login" class="">Login</NuxtLink></Button>
         <DarkModePicker />
       </div>
     </div>

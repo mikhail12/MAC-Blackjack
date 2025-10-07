@@ -4,12 +4,12 @@ import type { Database } from "~/types/database.types";
 export const useUserStore = defineStore('userStore', () => {
     // const localUser = useLocalStorage<User>("Current User", { id: '', currentBalance: 1000}, { initOnMounted: true })
     
-    const user = ref();
+    const user = ref<User|undefined>(undefined);
 
-    const getUser = async () => {
+    const getUser = async (): Promise<Ref<User|undefined>> => {
         const supabase = useSupabaseClient<Database>();
         if (user.value) {
-            return user.value;
+            return user;
         }
         let supaUser = (await supabase.auth.getUser()).data.user;
         
@@ -21,12 +21,13 @@ export const useUserStore = defineStore('userStore', () => {
             supaUser = (await supabase.auth.getUser()).data.user;
         }
         const { data, error } = await supabase.from('userProfile').select().eq('id', supaUser!.id ?? "").limit(1).maybeSingle().overrideTypes<User>();
-        if (error) {
+        if (error || !data) {
             console.warn(error);
-            throw Error("Couldn't load the user's profile")
+            throw new Error("Couldn't load the user's profile")
         }
         user.value = data
         return user;
+
     }
 
     const updateUserProfile = async () => {

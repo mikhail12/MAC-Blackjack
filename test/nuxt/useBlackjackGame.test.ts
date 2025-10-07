@@ -75,10 +75,11 @@ const sequenceForCards = (
         return [randomForIndex(rankIdx, CARD_RANKS.length), randomForIndex(suitIdx, CARD_SUITS.length)];
     });
 
-const createCard = (rank: Card['rank'], suit: Card['suit'] = '♠', isShown = false): Card => ({
+const createCard = (rank: Card['rank'], suit: Card['suit'] = '♠', isShown = false, cardNumber = 0): Card => ({
     rank,
     suit,
     isShown,
+    cardNumber,
 });
 
 const makeGame = (overrides: Partial<GameHistoryEntry> = {}): GameHistoryEntry => ({
@@ -624,7 +625,7 @@ describe('useBlackjackGame', () => {
             await dealerPlay();
 
             const dealerTotal = currentGame.value ? currentGame.value.dealerHand.reduce(
-                (sum, card) =>
+                (sum: number, card: Card) =>
                     sum +
                     (card.rank === 'A'
                         ? 11
