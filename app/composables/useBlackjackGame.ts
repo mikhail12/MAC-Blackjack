@@ -1,47 +1,27 @@
-import { ref, computed } from 'vue'
-
-export type CardSuit = '♠' | '♥' | '♦' | '♣'
-export type CardRank = 'A' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | 'J' | 'Q' | 'K'
-
-export interface Card {
-  rank: CardRank
-  suit: CardSuit
-  isShown: boolean
-}
-
-export type GameResult = 'win' | 'lose' | 'push' | 'early-win' | 'early-push' | null
-
-export enum GameStatus {
-    idle = 0,
-    player_turn = 1,
-    dealer_turn = 2,
-    finished = 3,
-};
-
-export interface GameHistoryEntry {
-  id?: number,
-  started_game: number,
-  latest_timestamp: number
-  bet: number
-  playerHand: Card[]
-  dealerHand: Card[]
-  gameStatus: GameStatus
-  result?: GameResult
-  payout?: number
-}
+import { ref, computed, watch } from 'vue'
+import {
+    GameStatus,
+    type Card,
+    type CardRank,
+    type CardSuit,
+    type GameHistoryEntry,
+    type GameResult,
+} from '~/types/game'
 
 const CARD_RANKS: CardRank[] = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
 const CARD_SUITS: CardSuit[] = ['♠', '♥', '♦', '♣']
 
 export const useBlackjackGame = async () => {
-    const userStore = await useUserStore();
+    const userStore = useUserStore();
     const user = await userStore.getUser();
     const currentGameStore = useCurrentgameStore();
     const currentGame = ref<GameHistoryEntry | undefined>(undefined);
+    const current_balance = computed(() => user.value?.current_balance ?? 0);
     try {
         currentGame.value = await currentGameStore.getGame() ?? undefined;
     }
     catch (error) { console.warn(error)}
+    
     
     const gameStatus = computed(() => currentGame.value?.gameStatus ? currentGame.value!.gameStatus : GameStatus.idle)
     const safeToShow = ref(false);
@@ -93,7 +73,7 @@ export const useBlackjackGame = async () => {
     const playerBusted = computed(() => playerTotal.value > 21);
     const dealerBusted = computed(() => dealerTotal.value > 21);
     const canHitOrStand = computed(() => gameStatus.value === GameStatus.player_turn && !playerBusted.value);
-    const canBet = computed(() => gameStatus.value === GameStatus.idle && user?.value?.current_balance > 0)
+    const canBet = computed(() => gameStatus.value === GameStatus.idle && current_balance.value > 0)
     const canReset = computed(() => gameStatus.value === GameStatus.finished);
 
     const finishGame =  async (result: GameResult) => {
@@ -111,7 +91,7 @@ export const useBlackjackGame = async () => {
         if (betAmount <= 0) {
             throw new Error("Bet must be a positive number");
         }
-        if (!user?.value || user.value.current_balance < betAmount) {
+        if (!user?.value || current_balance.value < betAmount) {
             throw new Error("Insufficient balance");
         }
         
@@ -128,14 +108,19 @@ export const useBlackjackGame = async () => {
             return;
         }
 
-        currentGame.value!.playerHand.push(drawCard());
-        currentGame.value!.playerHand.push(drawCard());
-        currentGame.value!.dealerHand.push(drawCard());
+        const activeGame = currentGame.value;
+        if (!activeGame) {
+            throw new Error('Failed to prepare active game state');
+        }
 
-        currentGame.value!.gameStatus = playerTotal.value === 21 ? GameStatus.dealer_turn : GameStatus.player_turn;
-        currentGame.value!.latest_timestamp = Date.now();
-        if (currentGame.value.gameStatus !== GameStatus.dealer_turn) {
-            await currentGameStore.updateGame(currentGame.value!);
+        activeGame.playerHand.push(drawCard());
+        activeGame.playerHand.push(drawCard());
+        activeGame.dealerHand.push(drawCard());
+
+        activeGame.gameStatus = playerTotal.value === 21 ? GameStatus.dealer_turn : GameStatus.player_turn;
+        activeGame.latest_timestamp = Date.now();
+        if (activeGame.gameStatus !== GameStatus.dealer_turn) {
+            await currentGameStore.updateGame(activeGame);
         }
         safeToShow.value = true;
     };
@@ -160,6 +145,7 @@ export const useBlackjackGame = async () => {
         while (dealerTotal.value < 17) {
             currentGame.value!.dealerHand.push(drawCard());
         }
+        await currentGameStore.updateGame(currentGame.value!);
         await determineWinner();
     }
 
@@ -167,7 +153,7 @@ export const useBlackjackGame = async () => {
         if (!canHitOrStand.value) {
             throw new Error('Cannot hit at this time')
         }
-
+        
         currentGame!.value?.playerHand.push(drawCard());
         await currentGameStore.updateGame(currentGame.value!);
 
