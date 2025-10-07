@@ -7,6 +7,7 @@ export default defineNuxtConfig({
       GEMINI_API_KEY: process.env.GEMINI_API_KEY,
       geminiDefaultModel:
         process.env.NUXT_PUBLIC_GEMINI_DEFAULT_MODEL ?? 'gemini-2.5-flash',
+      PAGE_LIMIT: process.env.PAGE_LIMIT ?? "5",
     },
   },
   app: {
