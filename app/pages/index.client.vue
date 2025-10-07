@@ -64,7 +64,6 @@ const reset = () => {
 }
 
 const newGame = async () => {
-    console.warn(newBet.value);
     if (newBet.value > 0) {
         await game.placeBetAndStartNewGame(newBet.value);
     }
