@@ -14,5 +14,4 @@ import Button from './ui/button/Button.vue';
 const userStore = useUserStore();
 const user = await userStore.getUser();
 const current_balance = computed(() => user.value?.current_balance ?? 0);
-console.warn(user)
 </script>

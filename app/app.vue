@@ -7,7 +7,7 @@
       </div>
       <div class="flex gap-5 items-center">
         <NuxtLink to="/">History</NuxtLink>
-        <Button @click="onClick">Login</Button>
+        <Button ><NuxtLink to="/Login">Login</NuxtLink></Button>
         <DarkModePicker />
       </div>
     </div>
@@ -19,15 +19,6 @@
 import { Button } from "@/components/ui/button";
 const colorMode = useColorMode();
 const isDarkMode = ref(false);
-const userStore = useUserStore();
-const gameStore = await useCurrentgameStore();
-const onClick = async (): Promise<void> => {
-  if (!gameStore) {
-    console.error("What the fuck")
-  }
-  const data = await gameStore.startGame(100);
-  console.warn(data);
-}
 
 watchEffect(() => {
   colorMode.preference = isDarkMode.value ? "dark" : "light";

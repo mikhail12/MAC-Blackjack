@@ -51,27 +51,19 @@ export type Database = {
           started_game?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "game_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "userProfile"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       userProfile: {
         Row: {
-          current_balance: number | null
+          current_balance: number
           id: string
         }
         Insert: {
-          current_balance?: number | null
-          id: string
+          current_balance?: number
+          id?: string
         }
         Update: {
-          current_balance?: number | null
+          current_balance?: number
           id?: string
         }
         Relationships: []

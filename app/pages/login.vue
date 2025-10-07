@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { Store } from 'pinia'
 import Button from '~/components/ui/button/Button.vue'
 
 const supabase = useSupabaseClient()
@@ -15,13 +14,9 @@ const signInWithOtp = async () => {
   if (error) console.log(error)
 }
 
-// const userState = useUserStore();
-// const user = await userState.getUser();
 const game = await useBlackjackGame();
 onMounted(async () => {
-    if (game.gameStatus.value === GameStatus.dealer_turn) {
-        game.dealerPlay();
-    }
+    await game.initOnMounted();
 });
 </script>
 <template>
