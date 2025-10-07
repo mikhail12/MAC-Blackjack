@@ -16,55 +16,63 @@ export type Database = {
     Tables: {
       game: {
         Row: {
+          bet: number | null
+          dealerHand: Json | null
           gameStatus: number | null
-          house_value: number | null
           id: number
           latest_timestamp: string | null
           payout: number | null
-          player_value: number | null
-          result: number | null
+          playerHand: Json | null
+          result: string | null
           started_game: string
           user_id: string
         }
         Insert: {
+          bet?: number | null
+          dealerHand?: Json | null
           gameStatus?: number | null
-          house_value?: number | null
           id?: number
           latest_timestamp?: string | null
           payout?: number | null
-          player_value?: number | null
-          result?: number | null
+          playerHand?: Json | null
+          result?: string | null
           started_game?: string
           user_id: string
         }
         Update: {
+          bet?: number | null
+          dealerHand?: Json | null
           gameStatus?: number | null
-          house_value?: number | null
           id?: number
           latest_timestamp?: string | null
           payout?: number | null
-          player_value?: number | null
-          result?: number | null
+          playerHand?: Json | null
+          result?: string | null
           started_game?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "game_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "userProfile"
+            referencedColumns: ["id"]
+          },
+        ]
       }
-      testtable: {
+      userProfile: {
         Row: {
-          created_at: string
-          id: number
-          some_text: string | null
+          current_balance: number | null
+          id: string
         }
         Insert: {
-          created_at?: string
-          id?: number
-          some_text?: string | null
+          current_balance?: number | null
+          id: string
         }
         Update: {
-          created_at?: string
-          id?: number
-          some_text?: string | null
+          current_balance?: number | null
+          id?: string
         }
         Relationships: []
       }
@@ -73,7 +81,25 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      process_pending_game_payout: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
+      trystartgamewithbet: {
+        Args: { betvalue: number }
+        Returns: {
+          bet: number
+          dealerHand: Json
+          gameStatus: number
+          id: number
+          latest_timestamp: string
+          payout: number
+          playerHand: Json
+          result: string
+          started_game: string
+          user_id: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

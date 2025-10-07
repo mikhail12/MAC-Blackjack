@@ -57,5 +57,5 @@ export default defineNuxtConfig({
       exclude: [],
       saveRedirectToCookie: true,
     }
-  }
+  },
 })
