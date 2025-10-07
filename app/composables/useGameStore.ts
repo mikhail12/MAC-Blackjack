@@ -68,6 +68,7 @@ export const useCurrentgameStore = defineStore('currentGame', () => {
                     rank: maybeCard.rank,
                     suit: maybeCard.suit,
                     isShown: Boolean(maybeCard.isShown),
+                    cardNumber: Number(maybeCard.cardNumber),
                 };
             }
         }
@@ -96,7 +97,7 @@ export const useCurrentgameStore = defineStore('currentGame', () => {
     };
 
     const serializeHand = (hand: Card[]): Json =>
-        hand.map(({ rank, suit, isShown }) => ({ rank, suit, isShown }));
+        hand.map(({ rank, suit, isShown, cardNumber }) => ({ rank, suit, isShown, cardNumber }));
 
     const toGameStatus = (status: number | null | undefined): GameStatus => {
         if (status === GameStatus.idle ||
@@ -109,7 +110,7 @@ export const useCurrentgameStore = defineStore('currentGame', () => {
     };
 
     const toGameResult = (result: string | null | undefined): GameResult => {
-        if (result === 'win' || result === 'lose' || result === 'push' || result === 'early-win' || result === 'early-push') {
+        if (result === 'win' || result === 'lose' || result === 'push') {
             return result;
         }
         return null;
