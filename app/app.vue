@@ -7,7 +7,7 @@
       </div>
       <div class="flex gap-5 items-center">
         <NuxtLink to="/">History</NuxtLink>
-        <Button ><NuxtLink to="/Login">Login</NuxtLink></Button>
+        <Button ><NuxtLink to="/login">Login</NuxtLink></Button>
         <DarkModePicker />
       </div>
     </div>

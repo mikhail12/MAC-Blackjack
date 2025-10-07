@@ -10,6 +10,7 @@ export const useCurrentgameStore = defineStore('currentGame', () => {
         const { data, error } = await supabase.rpc("trystartgamewithbet", betData).single();
         if (data) {
             const userStore = await useUserStore();
+            console.warn(userStore.getUser());
             await userStore.updateUserProfile();
             return data;
         }
@@ -20,8 +21,7 @@ export const useCurrentgameStore = defineStore('currentGame', () => {
     };
 
     const updateGame = async (game: GameHistoryEntry): Promise<void> => {
-        const error = await supabase
-
+        const { error } = await supabase
             .from("game")
             .update({
                 playerHand: JSON.stringify(game.playerHand),
@@ -30,9 +30,9 @@ export const useCurrentgameStore = defineStore('currentGame', () => {
                 result: game.result,
                 payout: game.payout,
             })
-            // .update({ playerHand: game.playerHand })
             .eq('id', game.id!);
-        if (error.error) {
+
+        if (error) {
             console.warn(error);
         }
     }
@@ -41,7 +41,7 @@ export const useCurrentgameStore = defineStore('currentGame', () => {
         const { data, error } = await supabase
             .from('game')
             .select()
-            .neq("gameStatus",3)
+            .neq("gameStatus",GameStatus.finished)
             .limit(1)
             .maybeSingle()
             .overrideTypes<GameHistoryEntry, { merge: false }>()
