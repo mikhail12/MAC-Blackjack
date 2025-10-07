@@ -2,7 +2,7 @@ name: All Vitest
 
 on:
     pull_request:
-        types: [synchronize]
+        types: [synchronize, opened]
 
 jobs:
     build-and-test:
