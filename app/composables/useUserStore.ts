@@ -36,7 +36,13 @@ export const useUserStore = defineStore('userStore', () => {
         user.value = data.data as unknown as User;
     }
 
-    return { getUser, updateUserProfile };
+    const addChips = async (amount: number) => {
+        const supabase = useSupabaseClient<Database>();
+        const data = await supabase.rpc("add_to_user_balance", {amount});
+        return !!data.data;
+    }
+
+    return { getUser, updateUserProfile, addChips };
 });
 
 export interface User {

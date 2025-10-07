@@ -1,3 +1,4 @@
+import { defineStore } from "pinia";
 import type { Database, Json } from "~/types/database.types";
 import {
     GameStatus,

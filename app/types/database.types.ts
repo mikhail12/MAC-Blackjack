@@ -73,6 +73,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      add_to_user_balance: {
+        Args: { amount: number }
+        Returns: boolean
+      }
       process_pending_game_payout: {
         Args: Record<PropertyKey, never>
         Returns: boolean
