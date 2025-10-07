@@ -8,8 +8,8 @@
         </div>
       </div>
       <div class="flex gap-5 items-center">
-        <NuxtLink to="/history">History</NuxtLink>
-        <Button class="hidden"><NuxtLink to="/login" class="">Login</NuxtLink></Button>
+        <Button variant="secondary"><NuxtLink to="/history">History</NuxtLink></Button>
+        <Button :class="`${showLogin ? '' : 'hidden'}`"><NuxtLink to="/login" class="">Login</NuxtLink></Button>
         <DarkModePicker />
       </div>
     </div>
@@ -21,6 +21,13 @@
 import { Button } from "@/components/ui/button";
 const colorMode = useColorMode();
 const isDarkMode = ref(false);
+
+const supabase = useSupabaseClient();
+const user = await supabase.auth.getUser();
+const showLogin = ref(true);
+if (user.data.user?.email) {
+  showLogin.value = false
+}
 
 watchEffect(() => {
   colorMode.preference = isDarkMode.value ? "dark" : "light";
