@@ -5,9 +5,6 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       GEMINI_API_KEY: process.env.GEMINI_API_KEY,
-      public: {
-        GEMINI_API_KEY: process.env.GEMINI_API_KEY,
-      },
       geminiDefaultModel:
         process.env.NUXT_PUBLIC_GEMINI_DEFAULT_MODEL ?? 'gemini-2.5-flash',
     },

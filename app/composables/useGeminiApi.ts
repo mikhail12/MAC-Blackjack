@@ -15,7 +15,7 @@ export const useGeminiApi = () => {
 
     // const defaultModel = FALLBACK_MODEL;
     const client = new GoogleGenAI({ 
-        apiKey: "AIzaSyAKa8OW_8L9tY2rELzLf25VnnT4zAeHPbM"
+        apiKey
     });
 
 
