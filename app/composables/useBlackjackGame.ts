@@ -93,7 +93,7 @@ export const useBlackjackGame = async () => {
     const playerBusted = computed(() => playerTotal.value > 21);
     const dealerBusted = computed(() => dealerTotal.value > 21);
     const canHitOrStand = computed(() => gameStatus.value === GameStatus.player_turn && !playerBusted.value);
-    const canBet = computed(() => gameStatus.value === GameStatus.idle && user!.value.current_balance > 0)
+    const canBet = computed(() => gameStatus.value === GameStatus.idle && user?.value?.current_balance > 0)
     const canReset = computed(() => gameStatus.value === GameStatus.finished);
 
     const finishGame =  async (result: GameResult) => {
@@ -111,7 +111,7 @@ export const useBlackjackGame = async () => {
         if (betAmount <= 0) {
             throw new Error("Bet must be a positive number");
         }
-        if (!user || user.value.currentBalance < betAmount) {
+        if (!user?.value || user.value.current_balance < betAmount) {
             throw new Error("Insufficient balance");
         }
         
@@ -177,7 +177,7 @@ export const useBlackjackGame = async () => {
         }
         else {
             currentGame.value!.gameStatus = GameStatus.dealer_turn;
-            currentGameStore.updateGame(currentGame.value!);
+            await currentGameStore.updateGame(currentGame.value!);
         }
     }
 
