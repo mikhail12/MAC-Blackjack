@@ -187,6 +187,46 @@ export const useCurrentgameStore = defineStore('currentGame', () => {
         return normalizeGame(data);
     }
 
+    const getHistoryPage = async (page: number): Promise<GameHistoryEntry[]> => {
+
+        const runtimeConfig = useRuntimeConfig();
+        const PAGE_LIMIT = Number(runtimeConfig.public.PAGE_LIMIT);
+        const supabase = useSupabaseClient<Database>();
+
+        const safePage = Number.isFinite(page) ? Math.max(1, Math.floor(page)) : 1;
+        const offset = (safePage - 1) * PAGE_LIMIT;
+        const { data, error } = await supabase
+            .from("game")
+            .select()
+            .order("latest_timestamp", { ascending: false, nullsFirst: false })
+            .range(offset, offset + PAGE_LIMIT - 1);
+
+        if (error || !data) {
+            if (error) {
+                console.warn(error);
+            }
+            return [];
+        }
+
+        return data.map(normalizeGame);
+    };
+
+    const getHistoryLength = async (): Promise<number> => {
+        const supabase = await useSupabaseClient<Database>();
+
+        const { data, error } = await supabase
+            .from("game")
+            .select('*', { count: 'exact' });
+        if (error || !data) {
+            if (error) {
+                console.warn(error);
+            }
+            return 0;
+        }
+
+        return data.length;
+    }
+
     const finishGame = async (game: GameHistoryEntry): Promise<boolean> => {
         const supabase = useSupabaseClient<Database>();
         await updateGame(game);
@@ -194,5 +234,5 @@ export const useCurrentgameStore = defineStore('currentGame', () => {
         return !!data.data
     }
 
-    return {id, startedTimestamp, startGame, updateGame, getGame, finishGame}
+    return {id, startedTimestamp, startGame, updateGame, getGame, getHistoryPage, finishGame, getHistoryLength}
 })

@@ -11,6 +11,39 @@ import {
 const CARD_RANKS: CardRank[] = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
 const CARD_SUITS: CardSuit[] = ['♠', '♥', '♦', '♣']
 
+export const calculateHandValue = (hand: Card[] | undefined): number => {
+    if (!hand) {
+        return 0;
+    }
+
+    let total = 0;
+    let aces = 0;
+    
+    for (const card of hand) {
+        switch (card.rank) {
+            case 'A':
+                aces += 1;
+                total += 11;
+                break;
+            case 'J':
+            case 'Q':
+            case 'K':
+                total += 10;
+                break;
+            default:
+                total += parseInt(card.rank);
+                break;
+        }
+    }
+
+    while (total > 21 && aces > 0) {
+        total -= 10;
+        aces -= 1;
+    }
+
+    return total;
+};
+
 export const useBlackjackGame = async () => {
     const userStore = useUserStore();
     const user = await userStore.getUser();
@@ -31,38 +64,7 @@ export const useBlackjackGame = async () => {
         return { rank, suit, isShown: false, cardNumber };
     }
 
-    const calculateHandValue = (hand: Card[] | undefined): number => {
-        if (!hand) {
-            return 0;
-        }
-
-        let total = 0;
-        let aces = 0;
-        
-        for (const card of hand) {
-            switch (card.rank) {
-                case 'A':
-                    aces += 1;
-                    total += 11;
-                    break;
-                case 'J':
-                case 'Q':
-                case 'K':
-                    total += 10;
-                    break;
-                default:
-                    total += parseInt(card.rank);
-                    break;
-            }
-        }
-
-        while (total > 21 && aces > 0) {
-            total -= 10;
-            aces -= 1;
-        }
-
-        return total;
-    };
+    
 
     // Computed Values
     const playerTotal = computed(() => calculateHandValue(currentGame.value?.playerHand));
