@@ -22,10 +22,13 @@ import { Button } from "@/components/ui/button";
 const colorMode = useColorMode();
 const isDarkMode = ref(false);
 
+const userStore = useUserStore();
+await userStore.getUser();
+
 const supabase = useSupabaseClient();
 const user = await supabase.auth.getUser();
 const showLogin = ref(true);
-if (user.data.user?.email) {
+if (user?.data.user?.email) {
   showLogin.value = false
 }
 
